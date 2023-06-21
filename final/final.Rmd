@@ -36,16 +36,6 @@ knitr::opts_chunk$set(cache = FALSE, echo = TRUE, message = FALSE, warning = FAL
 <!-- ======================================================================= -->
 [^1]: 21080351, [Github Repo](https://github.com/selinerturk/Final.git)
 
-# Final Hakkında Önemli Bilgiler
-
-\colorbox{BurntOrange}{GITHUB REPO BAĞLANTINIZI BU DOSYANIN 37. SATIRINA YAZINIZ!}
-
-**Proje gönderimi, Github repo linki ile birlikte ekampus sistemine bir zip dosyası yüklenerek yapılacaktır. Sisteme zip dosyası yüklemezseniz ve Github repo linki vermezseniz ara sınav ve final sınavlarına girmemiş sayılırsınız.**
-
-**Proje klasörünüzü sıkıştırdıktan sonra (`OgrenciNumarasi.zip` dosyası) 9 Haziran 2023 23:59'a kadar *ekampus.ankara.edu.tr* adresine yüklemeniz gerekmektedir.**
-
-\colorbox{WildStrawberry}{Daha fazla bilgi için proje klasöründeki README.md dosyasını okuyunuz.}
-
 # Giriş
 Göç insanların doğal, ekonomik, sosyal ve siyasal nedenlerden dolayı sürekli yaşadığı yerlerden başka yerlere toplu olarak veya bireysel olarak yerleşmeleri olayına denir.Bu yerleşim ülke içinde veya ülkeler arası olabilir. Her ikisinin ana sebebi de mevcut şartlardan daha iyi olan şartlara sahip bir hayata geçmektir. Bu şartlar detaylı bir bakış açısıyla değerlendirildiğinde ülkenin durumu hakkında önemli bilgileri bize sunar. Dışa göç verme oranları artan bir ülkenin şartlarında olumsuz gelişen durumlar olduğunu söylemek yanlış olmaz. Aynı şekilde dışardan göç alan bir ülke içinde diğer ülkelerden daha gelişmiş şartlara sahip olduğunu söyleyebiliriz. Göç genel olarak olumlu olumsuz olarak yorum yapabilirken arka planda yarattığı etkilerin de göz önünde bulundurulması gereken bir kavramdır. Çünkü göçün yarattığı bu mekansal değişim aynı zamanda birey, toplum ve milletlerin anlam ve değer dünyasının değişimi ve dönüşümünü de ifade etmektedir. Bu değişim ve dönüşümle beraber terk edilen ve yerleşilen yeni mekânla birlikte yeni mekânlardaki insanlar, değerler, kültürler ve insan ile ilgili ne varsa etkilenir.Ülkenin verdiği ve aldığı göçler olumlu olumsuz bir çok yansımayla karşılacaktır.
 
@@ -79,39 +69,46 @@ Nüfus artışı, günümüzün en önemli çevre sorunlarından birisidir. İç
 
 Çağdaş göç teorilerinin başlangıcı olarak görülen neo-klasik yaklaşımın merkezinde de itme-çekme yaklaşımı yer almaktadır. Neo-klasik yaklaşımda göç mikro ve makro düzeyde açıklanmıştır. Makro düzeyde göç, üretim faktörlerinin ülkeler arası dağılımındaki eşitsizlikten kaynaklanmakta ve göç hareketleri emeğin bol ve dolayısıyla ücretlerin düşük olduğu ülkelerden emeğin kıt ve ücretlerin yüksek olduğu ülkelere doğru gerçekleşmektedir.Mikro düzeyde ise göç, göç etme ve etmemenin avantaj ve dezavantajlarına ilişkin tam bilgiye sahip rasyonel bireyler tarafından verilen kararlarının sonucu gerçekleşmektedir.Özetle fayda maksimizasyonu, rasyonel seçim, bölge ve ülkeler arası faktör-fiyat farklılıkları ve işgücü hareketliliği ilkelerine dayanan neo-klasik ekonomi paradigmasını yansıtan itme-çekme modellerine göre, göçün başlıca nedeni ekonomiktir. [leblang2023ties] Hayatın yürütülmesini sağlayan temel konu ekonomidir.Hayat şartları ekonomik düzeyin izin verdiği ölçüde iyileştirilebilir.Verilen dış göçün önüne geçmek için sağlanması gereken şart hayat şartlarını iyileştirmeye yöelik bir ekonominin sağlanmış olmasıdır.Bu temelde bireylere sağlanan iş imkanları ile berbaber ülkede yürütülen ekonomi politikalarının bireylere olumlu yansımasını gerektirir.Bu sebeple göç veren illerin göç alan illerle karşılaştırılarak şartların iyileştirilmesi sağlanmalıdır.Nüfusun ülke genelide eşit dağılımını sağlayacak bir ekonomi politikası yürütülmelidir.
 
-Analize ait R kodları bu bölümde başlamalıdır. Bu bölümde veri setini R'a aktaran ve özet istatistikleri üreten kodlar yer almalıdır.
+#Analiz
 
 ```{r}
 library(tidyverse)
 library(here)
-survey <- read_csv(here("../data/survey.csv"))
+survey <- read_csv(here("data/iluyruk.xlsx"))
 ```
 
-Rmd dosyasında kod bloklarının bazılarında kod seçeneklerinin düzenlendiğine dikkat edin. 
+```{r}
+library(here)
+dt <- readxl::read_xls(here("data/iluyruk.xlsx"))
+dt2 <- readxl::read_xls(here("data/yaşcinsiyet.xlsx"))
 
-```{r, echo=FALSE}
-library(xtable) 
-# devtools::install_github("emraher/summarytools")
-library(summarytools)
-st_options(lang = "tr")
 ```
+```{r}
+install.packages("MASS")
+library(MASS)
+View(iluyruk)
+gelen=subset(iluyruk,select = c('iller','immigrants'))
+install.packages("ggplot2")
+library(ggplot2) 
+ggplot(survey, aes(x = iluyruk)) +
+  geom_histogram() +
+  scale_x_continuous(name = "iller") +
+  scale_y_continuous(name = "immigrants") +
+  ggtitle("illere göre gelen göç")
 
-`echo=FALSE` seçeneği ile kodların türetilen pdf dosyasında görünmesini engelleyin ve sonuçlarınızı tablo halinde rapor edin.
-
-```{r results='asis', echo=FALSE}
-survey %>%
-  select("sex", "credits", "handedness", "height", "handspan") %>% 
-  descr(stats = c("mean", "sd", "min", "med", "max"), transpose = TRUE) %>% 
-  xtable(caption = "Özet İstatistikler",
-         label = "tab:ozet",
-         align = c("l", "c", "c", "c", "c", "c")) %>% 
-  print(booktabs = TRUE, comment = FALSE, caption.placement = "top")
+```
+```{r}
+ggplot(yaşcinsiyet.xlsx, aes(x = , y = handspan)) +
+  geom_point(na.rm = TRUE, color = "blue") +
+  scale_x_continuous("yaş") +
+  scale_y_continuous("immigrants") 
 ```
 
 
 # Yöntem ve Veri Analizi
 
-Regrasyon analizi bağımlı değişken ile bir dizi bağımsız değişken arasındaki ilişkinin gücünü ve niteliğini belirlemeye çalışan analizdir.Bağımlı değişkenin bağımsız değişkenlerdeki değişikliğe göre nasıl değiştiğine odaklanr.Analizde temeli oluşturan değişken bağımsız değişkendir.Değeri sonuçlanacak,tahmin edilecek değer bağımlıdır.
+## Regrasyon analizi 
+bağımlı değişken ile bir dizi bağımsız değişken arasındaki ilişkinin gücünü ve niteliğini belirlemeye çalışan analizdir.Bağımlı değişkenin bağımsız değişkenlerdeki değişikliğe göre nasıl değiştiğine odaklanr.Analizde temeli oluşturan değişken bağımsız değişkendir.Değeri sonuçlanacak,tahmin edilecek değer bağımlıdır.
 
 -Basit lineer regresyon analizi, yalnızca bir bağımsız değişkenin olduğu durumda kullanılır. Denklem aşağıdaki gibidir:
 
@@ -150,26 +147,66 @@ Bu denklemde, iki değişken arasındaki kovaryansı (x - x̄) * (y - ȳ) hesapl
 
 Korelasyon katsayısı r, -1 ile 1 arasında bir değer alır. 1'e yaklaştıkça pozitif bir ilişkiyi, -1'e yaklaştıkça negatif bir ilişkiyi ve 0'a yaklaştıkça ilişkinin olmadığını ifade eder.Burada iller ve yaş grupları temel alınarak analiz yapılır.
 
+##Panel veri
+Belli zaman dönemlerin de hane halkı, firmalar, ülkeler gibi değişkenlere ait 
+verilerin yatay kesit gözlemlerinin bir araya getirilmesi ile oluşan veri kümesi anlamına 
+gelmektedir.Çalışmada kullanılan veri setinin belli bir zaman dönemini 
+kapsaması ve yatay kesit özlemlerinden oluşması nedeniyle panel veri analizine uygun olduğu 
+görülmektedir. 
 
-```{r plot, fig.align='center', fig.cap='Muhteşem Bir Grafik'}
-survey %>% 
-  ggplot(aes(x = handedness, y = handspan)) +
-  geom_point() +
-  geom_smooth() +
-  scale_x_continuous("Handedness") + 
-  scale_y_continuous("Handspan")
-```
+y = α + X β + u i = 1,...,N; t = 1,..., T
+
+i :  (yatay kesit),
+t : zaman
+y i.birimin t zamanındaki bağımlı değişken değeri
+α : skaler,
+β : K x 1 boyutunda parametre, 
+X : K açıklayıcı değiişkenin birimin t zamanındaki değerini,
+u : hata terimimi göstermektedir.
 
 
-                   
-                   
+
+##Aynı Yıllarda Görülen Göçlerin Sebeplerin Tablosu(ek)
+
+Göç nedeni              Erkek     %      Kadın     %      Toplam 
+(1)İş arama/bulma      753.333    78     206.639   22      959.972 
+(2)Tayin/atama         439.040    68      203.317  32      642.357 
+(3)Bağımlı göç*        456.775    37      772.314  63      1.229.089 
+(4)Eğitim              339.862    61     213.648   39      553.510 
+(5)Evlilik             21.100     6      334.612   94      355.712 
+(6)Deprem              73.374     50      73.184   50      146.558 
+(7)Güvenlik            20.301     65     10.898    35      31.199 
+(8)Diğer               543.879    67     264.420   33      808.299 
+(9)Bilinmeyen         37.371      61     24.126    39      61.497 
+  
+
+![göçlerin etkili olduğu devletler](https://pbs.twimg.com/media/EdHKIwpWAAAjtev?format=jpg&name=large)
+
+![İllere Göre Yaşlı Nüfusun Toplam Nüfus İçindeki Oranı][Tüik ek tablo]
+[İllere Göre Yaşlı Nüfusun Toplam Nüfus İçindeki Oranı] :https://pbs.twimg.com/media/EFx_-4WXUAAbv6V?format=jpg&name=4096x4096
+
+##Verilen Göçün Yoğun Olduğu İllerin Tarım Sanayi Oranı 
+ İller             Tarım/Sanayi Oranı        İller            Tarım/Sanayi Oranı
+1) Afyonkarahisar    1.178211964             14) Kastamonu       1.003230441
+2) Ağrı              1.924713129             15) Kırşehir        1.126213068
+3) Aksaray           1.150167049             16) Kilis           1.951393469
+4) Amasya            1.279179733             17) Mardin          1.158018647
+5) Ardahan           4.252081271             18) Muş             1.980455798
+6) Bayburt           3.210586661             19) Nevşehir        1.340982284
+7) Çorum             1.025773891             20) Niğde           1.345423868
+8) Erzurum           1.057067498             21) Sinop           1.199304883
+9) Hakkâri           1.188544927             22) Şanlıurfa       1.455081882
+10) Iğdır            2.895465886             23) Tokat           1.608265739
+11) Isparta          1.048798199             24) Tunceli         1.024287454
+12) Karaman          1.319622858             25) Yozgat          1.492850258
+13) Kars             2.040532483                  
+
 # Sonuç
 
 Analizde yer alan değişkenler ile ilgili olarak şu bekleyişler 
 bulunmaktadır:
 
--Küçük yerleşim birimlerinin eğitimli nüfusu tutamadıklarını, büyük kentlerin sundukları çalışma koşulları, ileri 
-teknoloji ve daha gelişmiş alt yapı hizmetleri nedeniyle eğitimli nüfusu çektiklerini  görülmüştür.
+-Küçük yerleşim birimlerinin eğitimli nüfusu tutamadıkları, büyük kentlerin sundukları çalışma koşulları, ileri teknoloji ve daha gelişmiş alt yapı hizmetleri nedeniyle eğitimli nüfusu çektiklerini  görülmüştür.
 
 -Bireylerin yaşları ilerledikçe göç etmeme eğiliminde olduğu beklenmektedir.Hayat kalitesini iyileştirme eğilimi genç-yetişkin bireylerde daha yüksektir.
 
@@ -180,12 +217,12 @@ teknoloji ve daha gelişmiş alt yapı hizmetleri nedeniyle eğitimli nüfusu ç
 -Bölgeler bazında yapılan model denemelerinde bölgelerin zenginliğini ve sanayileşmesini ifade eden değişkeninin göç 
 üzerinde oldukça etkili olduğu görülmüştür. Yani bölgelerin zenginliği ve sanayi yönünden gelişmişliği arttıkça insanlar için bu bölgeler cazibe merkezi olmakta ve göç almaktadır.
 
+-Yapılan araştırmada, iş gücüne katılan kadın sayısındaki değişimin net göç hızını ters 
+yönde etkilediği sonucuna ulaşılmıştır. Bu sonuca göre kadının işgücüne katılımının artması, 
+net göç hızının azalmasına neden olacağını göstermektedir.
 
-Yapılan analiz sonuçlarından da görüleceği üzere bireylerin göç etmesinde en önemli faktörlerin başında sosyo-ekonomik nedenler ve güvenlik problemleri gelmektedir.Bölgeler arasındaki gelir dağılımının dengelenmesi, istihdam ve işsizlik 
-problemlerinin çözülmesi, enflasyonun azaltılması ve güvenlik sorunlarının en aza indirgenmesi ile göçün istenmeyen sonuçları zamanla ortadan kalkacaktır. Söz konusu istenmeyen sonuçlar ise gecekondulaşma, çarpık kentleşme, alt yapı 
-yetersizlikleri, trafik problemleri ve çevre kirliliği gibi problemler olarak ifade edilebilir.Ayrıca, iç göç 
-hızını azaltma adına gelişmemiş bölgelerde sosyal, ekonomik ve kültürel yatırımların artırılması için 
-bölgesel planlar hazırlanıp uygulanması önerilmektedir. Dolayısıyla bölgelere yapılan göçlerle birlikte ortaya çıkan sorunların çözümüne yönelik uygun politikaların belirlenmesi ancak göçün nedenlerinin bilinmesi ile mümkündür.
+
+Yapılan analiz sonuçlarından da görüleceği üzere bireylerin göç etmesinde en önemli faktörlerin başında sosyo-ekonomik nedenler ve güvenlik problemleri gelmektedir.Bölgeler arasındaki gelir dağılımının dengelenmesi, istihdam ve işsizlik problemlerinin çözülmesi, enflasyonun azaltılması ve güvenlik sorunlarının en aza indirgenmesi ile göçün istenmeyen sonuçları zamanla ortadan kalkacaktır. Söz konusu istenmeyen sonuçlar ise gecekondulaşma, çarpık kentleşme, alt yapı yetersizlikleri, trafik problemleri ve çevre kirliliği gibi problemler olarak ifade edilebilir.Ayrıca, iç göç hızını azaltma adına gelişmemiş bölgelerde sosyal, ekonomik ve kültürel yatırımların artırılması için bölgesel planlar hazırlanıp uygulanması önerilmektedir. Dolayısıyla bölgelere yapılan göçlerle birlikte ortaya çıkan sorunların çözümüne yönelik uygun politikaların belirlenmesi ancak göçün nedenlerinin bilinmesi ile mümkündür.
 
 **Kaynakça bölümü Rmarkdown tarafından otomatik olarak oluşturulmaktadır. Taslak dosyada Kaynakça kısmında herhangi bir değişikliğe gerek yoktur.** 
 
